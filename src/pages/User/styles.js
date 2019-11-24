@@ -34,11 +34,11 @@ export const Bio = styled.Text`
   margin-top: 5px;
   text-align: center;
 `;
-
 export const Stars = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
 })`
   margin-top: 20px;
+  opacity: ${props => (props.refreshing ? 0 : 1)};
 `;
 
 export const Starred = styled.View`
