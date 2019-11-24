@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import propTypes from 'prop-types';
 import api from '../../services/api';
 
@@ -71,12 +71,6 @@ export default class User extends Component {
     this.setState({refreshing: true});
 
     this.componentDidMount();
-  };
-
-  handleNavigate = repository => {
-    const {navigation} = this.props;
-    console.tron.log(repository);
-    navigation.navigate('Repository', {repository});
   };
 
   render() {
