@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import {ActivityIndicator} from 'react-native';
+import propTypes from 'prop-types';
 import api from '../../services/api';
 
 import {
@@ -23,11 +24,13 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    loading: true,
+    page: 1,
   };
 
-  static PropTypes = {
-    navigation: PropTypes.shape({
-      getParam: PropTypes.func,
+  static propTypes = {
+    navigation: propTypes.shape({
+      getParam: propTypes.func,
     }).isRequired,
   };
 
@@ -36,15 +39,36 @@ export default class User extends Component {
     const user = navigation.getParam('user');
 
     const response = await api.get(`users/${user.login}/starred`);
-    this.setState({stars: response.data});
+    this.setState({stars: response.data, loading: false});
   }
+
+  loadMore = async () => {
+    const {page, loading, stars} = this.state;
+
+    if (loading) return;
+
+    const loadPage = page + 1;
+
+    this.setState({loading: true});
+
+    const {navigation} = this.props;
+    const user = navigation.getParam('user');
+
+    const response = await api.get(
+      `users/${user.login}/starred?page=${loadPage}`
+    );
+
+    this.setState({
+      stars: [...stars, ...response.data],
+      loading: false,
+      page: loadPage,
+    });
+  };
 
   render() {
     const {navigation} = this.props;
-    const {stars} = this.state;
-
+    const {stars, loading} = this.state;
     const user = navigation.getParam('user');
-
     return (
       <Container>
         <Header>
@@ -55,6 +79,8 @@ export default class User extends Component {
         <Stars
           data={stars}
           keyExtractor={star => String(star.id)}
+          onEndReachedThreshold={0.2} // Carrega mais itens quando chegar em 20% do fim
+          onEndReached={this.loadMore} // Função que carrega mais itens
           renderItem={({item}) => (
             <Starred>
               <OwnerAvatar source={{uri: item.owner.avatar_url}} />
@@ -65,6 +91,7 @@ export default class User extends Component {
             </Starred>
           )}
         />
+        {loading ? <ActivityIndicator color="#7159c1" /> : false}
       </Container>
     );
   }
