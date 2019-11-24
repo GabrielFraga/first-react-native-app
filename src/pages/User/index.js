@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, View} from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import propTypes from 'prop-types';
 import api from '../../services/api';
 
@@ -72,6 +72,12 @@ export default class User extends Component {
     this.componentDidMount();
   };
 
+  handleNavigate = repository => {
+    const {navigation} = this.props;
+    console.tron.log(repository);
+    navigation.navigate('Repository', {repository});
+  };
+
   render() {
     const {navigation} = this.props;
     const {stars, loading, refreshing} = this.state;
@@ -91,7 +97,8 @@ export default class User extends Component {
           onRefresh={this.refreshList} // Função dispara quando o usuário arrasta a lista pra baixo
           refreshing={refreshing} // Variável que armazena um estado true/false que representa se a lista está atualizando
           renderItem={({item}) => (
-            <Starred>
+            <Starred onPress={() => this.handleNavigate(item)}>
+              {/* <RepositoryButton></RepositoryButton> */}
               <OwnerAvatar source={{uri: item.owner.avatar_url}} />
               <Info>
                 <Title>{item.name}</Title>
