@@ -53,6 +53,7 @@ export default class User extends Component {
     this.setState({loading: true});
 
     const {navigation} = this.props;
+
     const user = navigation.getParam('user');
 
     const response = await api.get(
