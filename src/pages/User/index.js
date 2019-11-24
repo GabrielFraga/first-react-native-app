@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import propTypes from 'prop-types';
 import api from '../../services/api';
 
@@ -24,8 +24,9 @@ export default class User extends Component {
 
   state = {
     stars: [],
-    loading: true,
+    loading: false,
     page: 1,
+    refreshing: true,
   };
 
   static propTypes = {
@@ -39,7 +40,7 @@ export default class User extends Component {
     const user = navigation.getParam('user');
 
     const response = await api.get(`users/${user.login}/starred`);
-    this.setState({stars: response.data, loading: false});
+    this.setState({stars: response.data, refreshing: false});
   }
 
   loadMore = async () => {
@@ -65,9 +66,15 @@ export default class User extends Component {
     });
   };
 
+  refreshList = async () => {
+    this.setState({refreshing: true});
+
+    this.componentDidMount();
+  };
+
   render() {
     const {navigation} = this.props;
-    const {stars, loading} = this.state;
+    const {stars, loading, refreshing} = this.state;
     const user = navigation.getParam('user');
     return (
       <Container>
@@ -81,6 +88,8 @@ export default class User extends Component {
           keyExtractor={star => String(star.id)}
           onEndReachedThreshold={0.2} // Carrega mais itens quando chegar em 20% do fim
           onEndReached={this.loadMore} // Função que carrega mais itens
+          onRefresh={this.refreshList} // Função dispara quando o usuário arrasta a lista pra baixo
+          refreshing={refreshing} // Variável que armazena um estado true/false que representa se a lista está atualizando
           renderItem={({item}) => (
             <Starred>
               <OwnerAvatar source={{uri: item.owner.avatar_url}} />
