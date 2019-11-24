@@ -52,7 +52,6 @@ export default class Main extends Component {
   }
 
   handleAddUser = async () => {
-    // console.tron.log(this.state.newUser);
     const {users, newUser} = this.state;
 
     this.setState({loading: true});
