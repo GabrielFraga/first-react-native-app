@@ -98,7 +98,6 @@ export default class User extends Component {
           refreshing={refreshing} // Variável que armazena um estado true/false que representa se a lista está atualizando
           renderItem={({item}) => (
             <Starred onPress={() => this.handleNavigate(item)}>
-              {/* <RepositoryButton></RepositoryButton> */}
               <OwnerAvatar source={{uri: item.owner.avatar_url}} />
               <Info>
                 <Title>{item.name}</Title>
